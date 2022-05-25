@@ -3,7 +3,7 @@
 
 USE AdventureWorks2019
 GO
-ALTER PROCEDURE sp_AddPermissions
+CREATE PROCEDURE sp_AddPermissions
 @param_Name VARCHAR(50) = NULL 
 ,@param_Table_Name VARCHAR(50) = NULL 
 ,@param_Permission_Read INT = NULL
