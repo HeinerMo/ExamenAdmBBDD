@@ -18,14 +18,7 @@ AS
 				SET @r = N'GRANT SELECT ON ' + @param_Table_Name + ' TO ' + QUOTENAME(@param_Name,'[]') 
 				EXEC(@r)
 			END
-		IF(@param_Permission_Write LIKE 2)
-			BEGIN
-				PRINT 'Permiso escribir'
-				DECLARE @w nvarchar(4000)
-				SET @w = N'GRANT INSERT ON ' + @param_Table_Name  + ' TO ' + QUOTENAME(@param_Name,'[]') 
-				EXEC(@w)
-			END
-		IF(@param_Permission_AddUsers LIKE 3)
+		IF(@param_Permission_AddUsers LIKE 2)
 			BEGIN
 				PRINT 'Permiso usuarios'
 			END
