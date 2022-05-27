@@ -1,7 +1,7 @@
-from Window import Window
-from SSConection import PySSAdmin
-from UserWindow import UserWindow
-import Log
+from gui.components.Window import Window
+from util.SSConection import PySSAdmin
+from gui.UserWindow import UserWindow
+import util.Log as Log
 
 class LoginWindow (Window):
     def __init__(self):
@@ -9,42 +9,42 @@ class LoginWindow (Window):
         self.initComponents()
 
     def initComponents(self):
-        btnLogin = self.createButton()
-        btnLogin.setText("Iniciar Sesión")
-        btnLogin.setBackgroundColor("#004972")
-        btnLogin.setForegroundColor("white")
-        btnLogin.setPosition(400, 500)
-        btnLogin.setSize(15, 5)
-        btnLogin.execMethod(self.onLoginAction)
-
         lblSubTitle = self.createLabel()
         lblSubTitle.setText("IF5000_Examen1_C07409_B85042_B87581")
         lblSubTitle.setBackgroundColor("white")
-        lblSubTitle.setPosition(200, 200)
+        lblSubTitle.grid(0,0,5,300)
 
         lblName = self.createLabel()
         lblName.setText("Nombre de Usuario")
         lblName.setBackgroundColor("white")
-        lblName.setPosition(400, 250)
+        lblName.grid(1,0,5,5)
 
         self.txtName = self.createTextField()
         self.txtName.setSize(100, 50)
-        self.txtName.setPosition(400, 300)
+        self.txtName.grid(2,0,5,5)
 
         lblPassword = self.createLabel()
         lblPassword.setText("Contraseña")
         lblPassword.setBackgroundColor("white")
-        lblPassword.setPosition(400, 350)
+        lblPassword.grid(3,0,5,5)
 
         self.txtPassword = self.createTextField()
         self.txtPassword.setSize(100, 50)
-        self.txtPassword.setPosition(400, 400)
+        self.txtPassword.grid(4,0,5,5)
         self.txtPassword.maskText("*")
+
+        btnLogin = self.createButton()
+        btnLogin.setText("Iniciar Sesión")
+        btnLogin.setBackgroundColor("#004972")
+        btnLogin.setForegroundColor("white")
+        btnLogin.grid(5,0,5,5)
+        btnLogin.setSize(15, 5)
+        btnLogin.execMethod(self.onLoginAction)
     
     def onLoginAction(self):
         ssConn = PySSAdmin()
         #state = ssConn.connectToDB("TONI-WIN11", "AdventureWorks2019", self.txtName.getText(), self.txtPassword.getText())
-        state = ssConn.connectToDB("TONI-WIN11", "AdventureWorks2019", "superadmin", "123Password")
+        state = 1#ssConn.connectToDB("TONI-WIN11", "AdventureWorks2019", "superadmin", "123Password")
         if (state != 1):
             Log.showError(state)
         else:
