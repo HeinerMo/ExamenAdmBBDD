@@ -63,10 +63,13 @@ class PySSAdmin():
         SQL Server database table that are going to be modified. Code by: Antony Seas Vega"""
         return ','.join(ssColumns)
 
-    def execQuery(self, sqlQuery):
+    def execQuery(self, sqlQuery, values):
         cursor = self.dbConnection.cursor()
         cursor.execute(sqlQuery)
         return cursor
+
+    def getCursor(self):
+        return self.dbConnection.cursor()
 
     def closeConnection(self):
         self.dbConnection.close()

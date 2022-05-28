@@ -42,9 +42,11 @@ class LoginWindow (Window):
         btnLogin.execMethod(self.onLoginAction)
     
     def onLoginAction(self):
+        server = "TONI-WIN11"
+        db = "TRANSACTION_PROCESSING_EXAMEN"
         ssConn = PySSAdmin()
-        #state = ssConn.connectToDB("TONI-WIN11", "AdventureWorks2019", self.txtName.getText(), self.txtPassword.getText())
-        state = 1#ssConn.connectToDB("TONI-WIN11", "AdventureWorks2019", "superadmin", "123Password")
+        #state = ssConn.connectToDB(server, db, self.txtName.getText(), self.txtPassword.getText())
+        state = ssConn.connectToDB(server, db, "", "")
         if (state != 1):
             Log.showError(state)
         else:

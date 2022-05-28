@@ -37,15 +37,25 @@ class AddUserWindow (Window):
         btnLogin.execMethod(self.onLoginAction)
     
     def onLoginAction(self):
-        user = "Holaa"
-        password = "Holaa"
-        query = "EXEC [dbo].[sp_AddUserX]  N'Pruebaaaaaa', N'Bb123'"
-        state = self.ssConn.execQuery(query)
-        if (state != 1):
+        user = "'"+self.txtName.getText()+"'"
+        password = "'"+self.txtPassword.getText()+"'"
+
+#SET NOCOUNT ON;
+        sql = """\
+        DECLARE @RC int;
+        EXEC @RC = [TRANSACTION_PROCESSING_EXAMEN].[dbo].[sp_CreateLogin] ?, ?;
+        SELECT @RC AS rc;
+        """
+        values = (user, password)
+        cursor = self.ssConn.getCursor().execute(sql, values)
+        #rc = cursor.fetchval()  # pyodbc convenience method similar to cursor.fetchone()[0]
+        #print(rc)
+        cursor.close()
+        """if (state != 1):
             Log.showError(state)
             state.close()
         else:
-            Log.showInfo("Usuario Registrado")
+            Log.showInfo("Usuario Registrado")"""
 
 
 

@@ -9,11 +9,7 @@ def main():
     lw.setTitle("Iniciar Sesión")
     lw.startWin()
 
-    """
-    # Connection to SQLServer
-    ssConn = PySSAdmin()
-    ssConn.connectToDB("TONI-WIN11", "AdventureWorks2019", "tonis", "")
-    
+    """    
     # Get table from Postgres and convert it to pandas dataframe
     sql = "SELECT [CountryRegionCode], [Name] FROM Person.CountryRegion;"
     df =  ssConn.tableToDataFrame(sql)
