@@ -1,3 +1,4 @@
+#pip install tkcalendar
 from gui.LoginWindow import LoginWindow
 
 def main():
