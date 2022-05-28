@@ -1,4 +1,5 @@
 from gui.ReportCustomersWindow import ReportCustomersWindow
+from gui.ReportTranstationsWindow import ReportTransactionsWindow
 from gui.ReportUsers import ReportUsers
 from gui.components.Window import Window
 from util.SSConection import PySSAdmin
@@ -39,16 +40,22 @@ class GenerateReportWindow (Window):
         reportCust = ReportCustomersWindow(self.ssConn)
         reportCust.setSize(500, 500)
         reportCust.setTitle("Reporte de CUSTOMER_ACCOUNTS")
-        reportCust.setLocationCenter()
+        reportCust.setLocation(self.getPosX(), self.getPosY())
+        self.destroy()
 
     def onGenTransactionAction(self):
-        pass
+        reportCust = ReportTransactionsWindow(self.ssConn)
+        reportCust.setSize(500, 500)
+        reportCust.setTitle("Reporte de TRANSACTIONS")
+        reportCust.setLocation(self.getPosX(), self.getPosY())
+        self.destroy()
 
     def onGenUserAction(self):
         reportCust = ReportUsers(self.ssConn)
         reportCust.setSize(500, 500)
         reportCust.setTitle("Reporte de USERS")
-        reportCust.setLocationCenter()
+        reportCust.setLocation(self.getPosX(), self.getPosY())
+        self.destroy()
 
     
 
