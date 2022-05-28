@@ -10,11 +10,19 @@ AS
 		--Se crea un login
 			DECLARE @t nvarchar(4000)
 		BEGIN TRY
-			SET @t = N'CREATE LOGIN ' + QUOTENAME(@param_Name,'[]') + 'WITH PASSWORD=' + QUOTENAME(@param_Password,'''') + ', DEFAULT_DATABASE=' + QUOTENAME('TRANSACTION_PROCESSING_EXAMEN','[]')
-			EXEC(@t)
+			BEGIN TRANSACTION
+				SET @t = N'CREATE LOGIN ' + QUOTENAME(@param_Name,'[]') + 'WITH PASSWORD=' + QUOTENAME(@param_Password,'''') + ', DEFAULT_DATABASE=' + QUOTENAME('TRANSACTION_PROCESSING_EXAMEN','[]')
+				EXEC(@t)
+				
+				INSERT INTO CLI_COMMON.tb_USERS
+					(user_name)
+				VALUES
+					(@param_Name)
+			COMMIT
 			PRINT 'Login creado'
 		END TRY
 		BEGIN CATCH
+			ROLLBACK
 			PRINT 'No se ha podido crear el login'
 		END CATCH
 	END
@@ -35,7 +43,7 @@ AS
 			PRINT 'Usuario agregado a la base de datos TRANSACTION_PROCESSING_EXAMEN'
 		END TRY
 		BEGIN CATCH
-			PRINT 'Usuario agregado a la base de datos TRANSACTION_PROCESSING_EXAMEN'
+			PRINT 'No se ha podido agregar el usuario a la base de datos TRANSACTION_PROCESSING_EXAMEN'
 		END CATCH
 	END
 GO
