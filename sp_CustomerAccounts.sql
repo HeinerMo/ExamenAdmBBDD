@@ -1,117 +1,117 @@
 CREATE OR ALTER PROCEDURE sp_CustomerAccounts
-@param_Start_Date_Source DATETIME= NULL
-,@param_End_Date_Source DATETIME= NULL
+@param_beginDate DATETIME= NULL
+,@param_endDate DATETIME= NULL
 ,@param_Is_Deleted BIT =NULL
-,@param_Client_Id INT = NULL
+,@para_clientID INT = NULL
 ,@param_Customer_Name VARCHAR(25) = NULL
 ,@param_Customer_LastName VARCHAR(25)=NULL
-,@param_CustomerAccountId INT = NULL
+,@param_customerID INT = NULL
 
 AS
 BEGIN
 	BEGIN TRY
+		DECLARE @local_query VARCHAR(MAX) = 'SELECT * FROM [CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]'
+		DECLARE @local_where VARCHAR(MAX) = ' WHERE'
+		DECLARE @local_hasWhere BIT = 0
+		
+		
+		--DATES
+		IF (@param_beginDate IS NOT NULL)
+			BEGIN 
+				SET @local_where = @local_where + ' ([LAST_MODIFIED_DATE] >= ''' 
+				+ CAST(@param_beginDate AS VARCHAR) + ''')'
+				SET @local_hasWhere = 1
+			END
+		IF (@param_endDate IS NOT NULL)
+			BEGIN
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + ' AND ([LAST_MODIFIED_DATE] <= ''' + CAST(@param_endDate AS VARCHAR) + ''')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([LAST_MODIFIED_DATE] <= ''' + CAST(@param_endDate AS VARCHAR) + ''')'
+					END
+				SET @local_hasWhere = 1
+			END
+		--IS DELETED
+		IF (@param_Is_Deleted IS NOT NULL)
+			BEGIN
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + ' AND ([IS_DELETED] = ''' + CAST(@param_Is_Deleted AS VARCHAR) + ''')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([IS_DELETED] = ''' + CAST(@param_Is_Deleted AS VARCHAR) + ''')'
+					END
+				SET @local_hasWhere = 1
+			END
+		
+		--client id
+		IF (@para_clientID IS NOT NULL)
+			BEGIN 
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + 'AND ([CLIENT_ID] = ' + CAST(@para_clientID AS VARCHAR) + ')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([CLIENT_ID] = ' + CAST(@para_clientID AS VARCHAR) + ')'
+					END
+				SET @local_hasWhere = 1
+			END
 
-		DECLARE @SQL NVARCHAR(4000)
-		SET @SQL=''
-		DECLARE @local_start INT
-		SET @local_start = 0
+		--customer name
+		IF (@param_Customer_Name IS NOT NULL)
+			BEGIN 
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + 'AND ([CUSTOMER_NAME] = ''' + CAST(@param_Customer_Name AS VARCHAR) + ''')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([CUSTOMER_NAME] = ''' + CAST(@param_Customer_Name AS VARCHAR) + ''')'
+					END
+				SET @local_hasWhere = 1
+			END
+		--customer lastname
+		IF (@param_Customer_LastName IS NOT NULL)
+			BEGIN 
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + 'AND ([CUSTOMER_LAST_NAME] = ''' + CAST(@param_Customer_LastName AS VARCHAR) + ''')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([CUSTOMER_LAST_NAME] = ''' + CAST(@param_Customer_LastName AS VARCHAR) + ''')'
+					END
+				SET @local_hasWhere = 1
+			END
+		--customer
+		IF (@param_customerID IS NOT NULL)
+			BEGIN 
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + 'AND ([CUSTOMER_ACCOUNT_ID] = ' + CAST(@param_customerID AS VARCHAR) + ')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([CUSTOMER_ACCOUNT_ID] = ' + CAST(@param_customerID AS VARCHAR) + ')'
+					END
+				SET @local_hasWhere = 1
+			END
+
 			
-			IF((@param_Start_Date_Source IS NOT NULL AND @param_End_Date_Source IS NOT NULL) OR (@param_Start_Date_Source IS NOT NULL AND @param_End_Date_Source IS NULL) OR (@param_Start_Date_Source IS NULL AND @param_End_Date_Source IS NOT NULL) AND @local_start=0)
-			BEGIN 
-				SET @local_start = 1
-			END
-			IF(@param_Is_Deleted IS NOT NULL AND @local_start=0)
-			BEGIN 
-				SET @local_start = 2
-			END
-			IF(@param_Client_Id IS NOT NULL AND @local_start=0)
-			BEGIN 
-				SET @local_start = 3
-			END
-			IF(@param_Customer_Name IS NOT NULL AND @local_start=0)
-			BEGIN 
-				SET @local_start = 4
-			END
-			IF(@param_Customer_LastName IS NOT NULL AND @local_start=0)
-			BEGIN 
-				SET @local_start = 5
-			END
-			IF(@param_CustomerAccountId IS NOT NULL AND @local_start=0)
-			BEGIN 
-				SET @local_start = 6
-			END
-
-
-			--CUSTOMER DATE SOURCE
-			IF (@param_Start_Date_Source IS NOT NULL OR @param_End_Date_Source IS NOT NULL AND (EXISTS(SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE LAST_MODIFIED_DATE > @param_Start_Date_Source AND LAST_MODIFIED_DATE < @param_End_Date_Source)))
+		IF (@local_hasWhere = 1)
 			BEGIN
-				IF(@param_End_Date_Source IS NULL)
-				BEGIN
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE LAST_MODIFIED_DATE >= '+ ''''+CAST(@param_Start_Date_Source AS VARCHAR)+''''
-				END
-				IF(@param_Start_Date_Source IS NULL)
-				BEGIN
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE LAST_MODIFIED_DATE <= '+ ''''+CAST(@param_End_Date_Source AS VARCHAR)+''''
-				END
-				IF(@param_Start_Date_Source IS NOT NULL AND @param_End_Date_Source IS NOT NULL)
-				BEGIN
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE LAST_MODIFIED_DATE >= '+ ''''+CAST(@param_Start_Date_Source AS VARCHAR)+'''' +'AND LAST_MODIFIED_DATE <= '+ ''''+CAST(@param_End_Date_Source AS VARCHAR)+''''
-				END
+				SET @local_query = @local_query + ' ' + @local_where
 			END
-			--CUSTOMER IS DELETED
-			IF (@param_Is_Deleted IS NOT NULL AND (EXISTS(SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE IS_DELETED = @param_Is_Deleted)))
-			BEGIN
-				IF @local_start != 2
-				BEGIN
-					SET @SQL = @SQL + 'INTERSECT '
-				END
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE IS_DELETED = '+ CAST(@param_Is_Deleted AS VARCHAR)
-					PRINT @SQL
-			END
-
-
-			--CLIENT ID
-			IF (@param_Client_Id IS NOT NULL AND (EXISTS(SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CLIENT_ID = @param_Client_Id)))
-			BEGIN
-				IF @local_start != 3
-				BEGIN
-					SET @SQL = @SQL + 'INTERSECT '
-				END
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CLIENT_ID = '+ ''''+CAST(@param_Client_Id AS VARCHAR)+''''
-			END
-			--CUSTOMER NAME
-			IF (@param_Customer_Name IS NOT NULL AND (EXISTS(SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CUSTOMER_NAME = @param_Customer_Name)))
-			BEGIN
-				IF @local_start != 4
-				BEGIN
-					SET @SQL = @SQL + 'INTERSECT '
-				END
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CUSTOMER_NAME = '+ ''''+@param_Customer_Name+''''
-			END
-			--CUSTOMER LAST NAME
-			IF (@param_Customer_LastName IS NOT NULL AND (EXISTS(SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CUSTOMER_LAST_NAME = @param_Customer_LastName)))
-			BEGIN
-				IF @local_start != 5
-				BEGIN
-					SET @SQL = @SQL + 'INTERSECT '
-				END
-					SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CUSTOMER_LAST_NAME = '+ ''''+@param_Customer_LastName+''''
-			END
-			--CUSTOMER ACCOUNT ID
-			IF (@param_CustomerAccountId IS NOT NULL AND (EXISTS(SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CUSTOMER_ACCOUNT_ID = @param_CustomerAccountId)))
-			BEGIN
-			IF @local_start != 6
-				BEGIN
-					SET @SQL = @SQL + 'INTERSECT '
-				END
-				SET @SQL = @SQL + 'SELECT CUSTOMER_ACCOUNT_ID, CLIENT_ID, CUSTOMER_NAME, CUSTOMER_LAST_NAME, IS_DELETED, LAST_MODIFIED_DATE FROM CUSTOMERS.tb_CUSTOMER_ACCOUNTS WHERE CUSTOMER_ACCOUNT_ID = '+ CAST(@param_CustomerAccountId AS VARCHAR)
-			END
-			
-				EXEC(@SQL)
-				
+		EXEC(@local_query)
 	END TRY
-
 	BEGIN CATCH
 		PRINT 'N'+ @@ERROR	
 	END CATCH
 END
+
+--EXEC sp_CustomerAccounts '2012-01-01', '2022-12-31', 0, 1005, null, null, 11
