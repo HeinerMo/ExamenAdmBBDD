@@ -38,7 +38,7 @@ AS
 						SET [can_read] = 1
 						WHERE user_name = @param_Name						--Actualizar la tabla usuarios_tablas
 						
-						IF NOT EXISTS(SELECT TOP 1 1 FROM CLI_COMMON.tb_USERS_TABLES WHERE table_name = @param_Name)
+						IF NOT EXISTS(SELECT TOP 1 1 FROM CLI_COMMON.tb_USERS_TABLES WHERE table_name = @param_Table_Name AND user_name = @param_Name)
 							BEGIN
 								INSERT INTO CLI_COMMON.tb_USERS_TABLES
 									(user_name
