@@ -38,7 +38,7 @@ AS
 						SET [can_read] = 1
 						WHERE user_name = @param_Name						--Actualizar la tabla usuarios_tablas
 						
-						IF NOT EXISTS(SELECT TOP 1 1 FROM CLI_COMMON.tb_USERS_TABLES WHERE user_name = @param_Name)
+						IF NOT EXISTS(SELECT TOP 1 1 FROM CLI_COMMON.tb_USERS_TABLES WHERE table_name = @param_Name)
 							BEGIN
 								INSERT INTO CLI_COMMON.tb_USERS_TABLES
 									(user_name
@@ -55,8 +55,8 @@ AS
 	END
 
 
-SELECT * FROM CLI_COMMON.tb_USERS
-GO
-SELECT * FROM CLI_COMMON.tb_USERS_TABLES
-GO
-EXEC sp_AddPermissions 'Heiner', '[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]', 2
+--SELECT * FROM CLI_COMMON.tb_USERS
+--GO
+--SELECT * FROM CLI_COMMON.tb_USERS_TABLES
+--GO
+--EXEC sp_AddPermissions 'Heiner', '[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]', 2
