@@ -97,3 +97,6 @@ AS
 			END
 		EXEC(@local_query)
 	END --END CREATE OR ALTER PROCEDURE
+
+
+--EXEC sp_Events '2012-01-01', '2022-10-10', NULL, 2, 3, 11, 1010
