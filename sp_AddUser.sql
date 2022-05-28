@@ -19,6 +19,7 @@ AS
 				VALUES
 					(@param_Name)
 			COMMIT
+			EXEC sp_AddUsers @param_Name
 			PRINT 'Login creado'
 		END TRY
 		BEGIN CATCH
@@ -29,9 +30,6 @@ AS
 GO
 
 --ADD USER TO DATABASE
-USE TRANSACTION_PROCESSING_EXAMEN
-GO
-
 CREATE OR ALTER PROCEDURE sp_AddUsers
 @param_Name VARCHAR(50) = NULL 
 AS
@@ -48,5 +46,8 @@ AS
 	END
 GO
 
---EXEC sp_CreateLogin 'Heiner', '12345'
---EXEC sp_AddUsers 'Heiner'
+EXEC sp_CreateLogin 'Heiner', '12345'
+
+
+--SELECT * FROM CLI_COMMON.tb_USERS
+--DELETE FROM CLI_COMMON.tb_USERS
