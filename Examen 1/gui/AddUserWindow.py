@@ -1,6 +1,7 @@
 from gui.components.Window import Window
 from util.SSConection import PySSAdmin
 import util.Log as Log
+import pyodbc
 
 class AddUserWindow (Window):
     def __init__(self, ssConn:PySSAdmin):
@@ -37,25 +38,23 @@ class AddUserWindow (Window):
         btnLogin.execMethod(self.onLoginAction)
     
     def onLoginAction(self):
-        user = "'"+self.txtName.getText()+"'"
-        password = "'"+self.txtPassword.getText()+"'"
+        try:
+            user = "'"+self.txtName.getText()+"'"
+            password = "'"+self.txtPassword.getText()+"'"
+            query = "EXEC [dbo].[sp_CreateLogin] "+user+", "+password
+            cursor = self.ssConn.getCursor().execute(query)
+            cursor.commit()
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[0]
+            print(sqlstate)
+            if sqlstate == '08001':
+                return ""
 
-#SET NOCOUNT ON;
-        sql = """\
-        DECLARE @RC int;
-        EXEC @RC = [TRANSACTION_PROCESSING_EXAMEN].[dbo].[sp_CreateLogin] ?, ?;
-        SELECT @RC AS rc;
-        """
-        values = (user, password)
-        cursor = self.ssConn.getCursor().execute(sql, values)
-        #rc = cursor.fetchval()  # pyodbc convenience method similar to cursor.fetchone()[0]
-        #print(rc)
+            print(ex.args[1])
+
+        Log.showInfo("Usuario Registrado")
         cursor.close()
-        """if (state != 1):
-            Log.showError(state)
-            state.close()
-        else:
-            Log.showInfo("Usuario Registrado")"""
+        del cursor
 
 
 

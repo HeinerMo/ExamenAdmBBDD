@@ -47,6 +47,7 @@ class LoginWindow (Window):
         ssConn = PySSAdmin()
         #state = ssConn.connectToDB(server, db, self.txtName.getText(), self.txtPassword.getText())
         state = ssConn.connectToDB(server, db, "", "")
+
         if (state != 1):
             Log.showError(state)
         else:

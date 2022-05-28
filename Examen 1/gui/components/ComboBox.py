@@ -24,3 +24,10 @@ class ComboBox:
 
     def getSelection(self):
         return self.__comboBox.get()
+
+    def getComboBox(self):
+        return self.__comboBox
+
+    def setState(self, state:str):
+        self.__comboBox.state = state
+        

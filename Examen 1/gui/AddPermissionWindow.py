@@ -1,6 +1,7 @@
 from gui.components.Window import Window
 from util.SSConection import PySSAdmin
 import util.Log as Log
+import pyodbc
 
 class AddPermissionWindow (Window):
     def __init__(self, ssConn:PySSAdmin):
@@ -48,15 +49,39 @@ class AddPermissionWindow (Window):
         btnLogin.execMethod(self.onAddAction)
     
     def onAddAction(self):
-        user = "Holaa"
-        password = "Holaa"
-        query = "EXEC [dbo].[sp_AddUserX]  N'Pruebaaaaaa', N'Bb123'"
-        state = self.ssConn.execQuery(query)
-        if (state != 1):
-            Log.showError(state)
-            state.close()
-        else:
-            Log.showInfo("Usuario Registrado")
+        try:
+            user = "'"+self.txtName.getText()+"'"
+            permission = -1
+            table = "NULL"
+            
+            if (self.cmbPermission.getSelection() == "Lectura"):
+                table = self.cmbTable.getSelection()
+                if (table == "CUSTOMER_ACCOUNTS"):
+                    table = "'"+"[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]"+"'"
+                elif (table == "TRANSACTIONS"):
+                    table = "'"+"[FINANCIAL_DEPOSIT].[tb_EVENTS]"+"'"
+                elif (table == "USERS"):
+                    table = "'"+"[CLI_COMMON].[tb_USERS]"+"'"
+            
+            if (self.cmbPermission.getSelection() == "Lectura"):
+                permission = 2
+            elif (self.cmbPermission.getSelection() == "Agregar Usuarios"):
+                permission = 1
+
+            query = "EXEC [dbo].[sp_AddPermissions] "+user+", "+table+", "+str(permission)
+            cursor = self.ssConn.getCursor().execute(query)
+            cursor.commit()
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[0]
+            print(sqlstate)
+            if sqlstate == '08001':
+                return ""
+
+            print(ex.args[1])
+
+        Log.showInfo("Usuario Registrado")
+        cursor.close()
+        del cursor
 
 
 
