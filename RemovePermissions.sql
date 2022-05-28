@@ -16,9 +16,6 @@ AS
 				--Crear logins
 					SET @r = N'REVOKE EXEC ON sp_CreateLogin TO ' + QUOTENAME(@param_Name,'[]') 
 					EXEC(@r)
-				--Agregar usuarios
-					SET @r = N'REVOKE EXEC ON sp_AddUsers TO ' + QUOTENAME(@param_Name,'[]') 
-					EXEC(@r)
 					COMMIT
 					PRINT ('Permiso para crear usuarios revocado')
 				END TRY
