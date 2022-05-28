@@ -17,12 +17,22 @@ AS
 		DECLARE @local_hasWhere BIT = 0
 
 		--dates
-		IF (@param_beginDate IS NOT NULL AND @param_endDate IS NOT NULL)
+		IF (@param_beginDate IS NOT NULL)
 			BEGIN 
 				SET @local_where = @local_where + ' ([SUBMITTED_DATE] >= ''' 
-				+ CAST(@param_beginDate AS VARCHAR)
-				+ ''' AND ' 
-				+ '[SUBMITTED_DATE] <= ''' + CAST(@param_endDate AS VARCHAR) + ''')'
+				+ CAST(@param_beginDate AS VARCHAR) + ''')'
+				SET @local_hasWhere = 1
+			END
+		IF (@param_endDate IS NOT NULL)
+			BEGIN
+				IF (@local_hasWhere = 1)
+					BEGIN
+						SET @local_where = @local_where + ' AND ([SUBMITTED_DATE] <= ''' + CAST(@param_endDate AS VARCHAR) + ''')'
+					END
+				ELSE
+					BEGIN
+						SET @local_where = @local_where + ' ([SUBMITTED_DATE] <= ''' + CAST(@param_endDate AS VARCHAR) + ''')'
+					END
 				SET @local_hasWhere = 1
 			END
 		--eventID
