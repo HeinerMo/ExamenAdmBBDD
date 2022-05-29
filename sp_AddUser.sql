@@ -8,7 +8,7 @@ CREATE OR ALTER PROCEDURE sp_CreateLogin
 AS
 	BEGIN
 		--Se crea un login
-			DECLARE @t nvarchar(4000)
+			DECLARE @t nvarchar(MAX)
 		BEGIN TRY
 			BEGIN TRANSACTION
 				SET @t = N'CREATE LOGIN ' + QUOTENAME(@param_Name,'[]') + 'WITH PASSWORD=' + QUOTENAME(@param_Password,'''') + ', DEFAULT_DATABASE=' + QUOTENAME('TRANSACTION_PROCESSING_EXAMEN','[]')
@@ -18,8 +18,8 @@ AS
 					(user_name)
 				VALUES
 					(@param_Name)
-			COMMIT
 			EXEC sp_AddUsers @param_Name
+			COMMIT
 			PRINT 'Login creado'
 		END TRY
 		BEGIN CATCH
@@ -34,7 +34,7 @@ CREATE OR ALTER PROCEDURE sp_AddUsers
 @param_Name VARCHAR(50) = NULL 
 AS
 	BEGIN
-		DECLARE @t nvarchar(4000)
+		DECLARE @t nvarchar(MAX)
 		BEGIN TRY
 			SET @t = N'CREATE USER ' + QUOTENAME(@param_Name,'[]') + 'FOR LOGIN ' + QUOTENAME(@param_Name,'[]') 
 			EXEC(@t)
@@ -46,7 +46,7 @@ AS
 	END
 GO
 
-EXEC sp_CreateLogin 'Heiner', '12345'
+--EXEC sp_CreateLogin 'Heiner', '12345'
 
 
 --SELECT * FROM CLI_COMMON.tb_USERS

@@ -14,10 +14,16 @@ AS
 				BEGIN TRY
 					BEGIN TRANSACTION
 				--Crear logins
-					SET @r = N'REVOKE EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
+					SET @r = 'REVOKE EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
 					EXEC(@r)
-					SET @r = N'REVOKE EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
-					EXEC(@r)						--actualizar tabla usuarios
+					SET @r = 'REVOKE EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
+					EXEC(@r)
+					--SET @r = 'REVOKE ALTER ANY USER TO ' + QUOTENAME(@param_Name,'[]') 
+					--EXEC(@r)
+					--SET @r = 'REVOKE ALTER ANY LOGIN TO ' + QUOTENAME(@param_Name,'[]') 
+					--EXEC(@r)
+					--SET @r = 'REVOKE ALTER ANY CREDENTIAL TO ' + QUOTENAME(@param_Name,'[]') 
+					--EXEC(@r)						--actualizar tabla usuarios
 						UPDATE CLI_COMMON.tb_USERS
 						SET [can_create_users] = 0
 						WHERE user_name = @param_Name
@@ -32,8 +38,10 @@ AS
 		IF(@param_Permission LIKE 2)
 			BEGIN
 				BEGIN TRY
+					SET @r = 'REVOKE SELECT ON ' + @param_Table_Name + ' TO ' + QUOTENAME(@param_Name,'[]')
+					EXEC(@r)
 					IF (@param_Table_Name LIKE '%tb_CUSTOMER_ACCOUNTS%')
-							BEGIN
+							BEGIN						
 								SET @r = 'REVOKE EXEC ON [dbo].[sp_Phones] TO ' + QUOTENAME(@param_Name,'[]')
 								EXEC(@r)
 								SET @r = 'REVOKE EXEC ON [dbo].[sp_CreditCard] TO ' + QUOTENAME(@param_Name,'[]')

@@ -14,10 +14,22 @@ AS
 				BEGIN TRY
 					BEGIN TRANSACTION
 						--Crear logins
-						SET @r = N'GRANT EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
+						SET @r = 'GRANT EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
 						EXEC(@r)
-						SET @r = N'GRANT INSERT ON [CLI_COMMON].[tb_USERS] TO ' + QUOTENAME(@param_Name,'[]') 
+						PRINT('EXEC ON CREATE LOGIN')
+						SET @r = 'GRANT INSERT ON [CLI_COMMON].[tb_USERS] TO ' + QUOTENAME(@param_Name,'[]') 
 						EXEC(@r)
+						--PRINT('GRANT INSERT')
+						--SET @r = 'GRANT ALTER ANY USER TO ' + QUOTENAME(@param_Name,'[]') 
+						--EXEC(@r)
+						--PRINT('GRANT ALTER USER')
+						--SET @r = 'GRANT ALTER ANY CREDENTIAL TO ' + QUOTENAME(@param_Name,'[]') 
+						--EXEC(@r)
+						--PRINT('GRANT ALTER CREDENTIAL')
+						--SET @r = 'GRANT ALTER ANY LOGIN TO ' + QUOTENAME(@param_Name,'[]') 
+						--EXEC(@r)
+						--PRINT('GRANT ALTER LOGIN')
+						
 						--actualizar tabla usuarios
 						UPDATE CLI_COMMON.tb_USERS
 						SET [can_create_users] = 1
@@ -35,6 +47,8 @@ AS
 			
 				BEGIN TRANSACTION
 					BEGIN TRY
+						SET @r = 'GRANT SELECT ON ' + @param_Table_Name + ' TO ' + QUOTENAME(@param_Name,'[]')
+						EXEC(@r)
 						IF (@param_Table_Name LIKE '%tb_CUSTOMER_ACCOUNTS%')
 							BEGIN
 								SET @r = 'GRANT EXEC ON [dbo].[sp_Phones] TO ' + QUOTENAME(@param_Name,'[]')
@@ -90,4 +104,6 @@ AS
 --GO
 --SELECT * FROM CLI_COMMON.tb_USERS_TABLES
 --GO
---EXEC sp_AddPermissions 'prueba', '[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]', 2
+--EXEC sp_AddPermissions 'heiner', '[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]', 1
+
+

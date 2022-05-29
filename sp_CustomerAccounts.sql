@@ -110,7 +110,7 @@ BEGIN
 		EXEC(@local_query)
 	END TRY
 	BEGIN CATCH
-		PRINT 'N'+ @@ERROR	
+		PRINT @@ERROR	
 	END CATCH
 END
 
