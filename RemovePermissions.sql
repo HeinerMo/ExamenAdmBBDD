@@ -14,7 +14,9 @@ AS
 				BEGIN TRY
 					BEGIN TRANSACTION
 				--Crear logins
-					SET @r = N'REVOKE EXEC ON sp_CreateLogin TO ' + QUOTENAME(@param_Name,'[]') 
+					SET @r = N'REVOKE EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
+					EXEC(@r)
+					SET @r = N'REVOKE EXEC ON [dbo].[sp_CreateLogin] TO ' + QUOTENAME(@param_Name,'[]') 
 					EXEC(@r)						--actualizar tabla usuarios
 						UPDATE CLI_COMMON.tb_USERS
 						SET [can_create_users] = 0
@@ -30,8 +32,33 @@ AS
 		IF(@param_Permission LIKE 2)
 			BEGIN
 				BEGIN TRY
-					SET @r = N'REVOKE SELECT ON ' + @param_Table_Name + ' TO ' + QUOTENAME(@param_Name,'[]') 
-					EXEC(@r)						
+					IF (@param_Table_Name LIKE '%tb_CUSTOMER_ACCOUNTS%')
+							BEGIN
+								SET @r = 'REVOKE EXEC ON [dbo].[sp_Phones] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+								SET @r = 'REVOKE EXEC ON [dbo].[sp_CreditCard] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+								SET @r = 'REVOKE EXEC ON [dbo].[sp_Address] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+								SET @r = 'REVOKE EXEC ON [dbo].[sp_CustomerAccounts] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+							END
+						
+						IF (@param_Table_Name LIKE '%tb_EVENTS%')
+							BEGIN
+								SET @r = 'REVOKE EXEC ON [dbo].[sp_Events] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+								SET @r = 'REVOKE SELECT ON [FINANCIAL_DEPOSIT].[tb_CURRENCY] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+								SET @r = 'REVOKE SELECT ON [FINANCIAL_DEPOSIT].[tb_PAYMENT_TYPE] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+							END
+						
+						IF (@param_Table_Name LIKE '%tb_USERS%')
+							BEGIN
+								SET @r = 'REVOKE EXEC ON [dbo].[sp_Users] TO ' + QUOTENAME(@param_Name,'[]')
+								EXEC(@r)
+							END					
 					--actualizar tabla usuarios
 					UPDATE CLI_COMMON.tb_USERS
 					SET [can_read] = 0
@@ -51,4 +78,4 @@ AS
 			END
 	END
 
---EXEC sp_RemovePermissions 'Heiner', '[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]', 2
+--EXEC sp_RemovePermissions 'prueba', '[CUSTOMERS].[tb_CUSTOMER_ACCOUNTS]', 2

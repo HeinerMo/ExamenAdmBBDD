@@ -79,7 +79,7 @@ class AddPermissionWindow (Window):
 
             print(ex.args[1])
 
-        Log.showInfo("Usuario Registrado")
+        Log.showInfo("Permiso asignado")
         cursor.close()
         del cursor
 

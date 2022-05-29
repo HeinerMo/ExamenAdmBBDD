@@ -31,7 +31,7 @@ class UserWindow (Window):
         btnAddPermission.execMethod(self.onAddPermissionAction)
 
         btnRemovePermission = self.createButton()
-        btnRemovePermission.setText("Eliminar Usuarios")
+        btnRemovePermission.setText("Eliminar permisos")
         btnRemovePermission.setBackgroundColor("#004972")
         btnRemovePermission.setForegroundColor("white")
         btnRemovePermission.grid(1,0,5,5)

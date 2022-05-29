@@ -42,7 +42,7 @@ class LoginWindow (Window):
         btnLogin.execMethod(self.onLoginAction)
     
     def onLoginAction(self):
-        server = "TONI-WIN11"
+        server = "DESKTOP-UNEB6N9"
         db = "TRANSACTION_PROCESSING_EXAMEN"
         ssConn = PySSAdmin()
         state = ssConn.connectToDB(server, db, self.txtName.getText(), self.txtPassword.getText())

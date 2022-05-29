@@ -28,6 +28,7 @@ class AddUserWindow (Window):
         self.txtPassword = self.createTextField()
         self.txtPassword.setSize(100, 50)
         self.txtPassword.grid(3,0,5,5)
+        self.txtPassword.maskText('*')
 
         btnLogin = self.createButton()
         btnLogin.setText("Agregar")

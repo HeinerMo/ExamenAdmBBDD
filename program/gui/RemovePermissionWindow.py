@@ -79,7 +79,7 @@ class RemovePermissionWindow (Window):
 
             print(ex.args[1])
 
-        Log.showInfo("Usuario Registrado")
+        Log.showInfo("Permiso revocado")
         cursor.close()
         del cursor
 
